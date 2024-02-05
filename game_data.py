@@ -205,7 +205,7 @@ class World:
         # The map MUST be stored in a nested list as described in the load_map() function's docstring below
         self.map = self.load_map(map_data)
         self.location = self.load_location(location_data)
-        self.items_data =
+        self.items_data = self.load_item(items_data)
 
         # NOTE: You may choose how to store location and item data; create your own World methods to handle these
         # accordingly. The only requirements:
@@ -248,18 +248,35 @@ class World:
             # point2 = int(location_data.readline().strip())
             brief_desc = location_data.readline().strip()
             long_desc = location_data.readline().strip()
+
             preitem = location_data.readline().strip()
-            if preitem == '\n':
+            if preitem == '':
                 item_avai = None
             else:
                 preitem1 = preitem.split(';')
-                item_avai = {int(t.split('=')[0]): t.split('=')[1] for t in preitem1}
+                item_avai = {t.split('=')[0]: int(t.split('=')[1]) for t in preitem1}
+
             location = Location(name,points,brief_desc,long_desc,False,item_avai)
             locations.append(location)
             location_data.readline()
             lastline = location_data.readline() # we let the lastline of location file to be ENDFILE
         return locations
 
+
+    def load_item(self,items_data: TextIO) -> list[Item]:
+        """Store a list of items in the world"""
+        # with open("D:/23 winter courses/csc111/assignments/csc111-project1/items.txt") as items_data:
+
+        itemlist = []
+        for line in items_data.readlines():
+            listline = line.strip().split()
+            start = int(listline[0])
+            target = int(listline[1])
+            target_points = int(listline[2])
+            name = listline[3]
+            item = Item(name,start,target,target_points)
+            itemlist.append(item)
+        return itemlist
 
     # TODO: Add methods for loading location data and item data (see note above).
 

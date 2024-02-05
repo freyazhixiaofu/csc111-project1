@@ -9,7 +9,7 @@ END
 0
 You are on the first floor of the Robarts Library. There is an empty study room to the South, an exit from the library to the East.
 You are on the first floor of the Robarts Library. It's usually crowded at this time of the day, but today it's eerily quiet. Only a few students are studying inside one of the study rooms. You better not disturb them. A librarian stands near the service desk, looking bored and sleepy. There is an empty study room to the South, an exit from the library to the East.
-"drink":5; "salmon": 5
+drink = 5; salmon = 5
 END
 
 2
