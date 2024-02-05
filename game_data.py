@@ -25,17 +25,38 @@ class Location:
     """A location in our text adventure game world.
 
     Instance Attributes:
-        - # TODO
+        - number: a position in the world map
+        - points: a brief description
+        - br_desc: a brief description
+        - long_desc: a long description
+        - direc: a list of available commands/directions to move
+        - visit: whether the place has been visited
+        - item_ava: a list of available commands/directions to move
 
     Representation Invariants:
-        - # TODO
+        - number >= -1
+        - points >= 0
     """
+    number: int
+    points: int
+    br_desc: str
+    long_desc: str
+    # direc: list[str]
+    visit: bool
+    item_ava: Optional[dict[str, int]] = None
 
-    def __init__(self) -> None:
+    def __init__(self, number: int, points: int, brief: str, long: str,
+                 visit: bool, itemavai: dict) -> None:
         """Initialize a new location.
 
-        # TODO Add more details here about the initialization if needed
         """
+        self.number = number
+        self.points = points
+        self.br_desc = brief
+        self.long_desc = long
+        # self.direc = direc
+        self.visit = visit
+        self.item_ava = itemavai
 
         # NOTES:
         # Data that could be associated with each Location object:
@@ -65,19 +86,29 @@ class Location:
         # NOTE: This is just a suggested method
         # i.e. You may remove/modify/rename this as you like, and complete the
         # function header (e.g. add in parameters, complete the type contract) as needed
-
-        # TODO: Complete this method, if you'd like or remove/replace it if you're not using it
+        if self.item_ava == {}:
+            return "look", "inventory", "score", "quit", "deposit"
+        return "look", "inventory", "score", "quit", "pickup", "deposit"
 
 
 class Item:
     """An item in our text adventure game world.
 
     Instance Attributes:
-        - # TODO
+        - name: str
+        - start: int
+        - target: int
+        - target_points: int
 
     Representation Invariants:
-        - # TODO
+        - start >= 0
+        - target >= 0
+        - target_points >= 0
     """
+    name: str
+    start: int
+    target: int
+    target_points: int
 
     def __init__(self, name: str, start: int, target: int, target_points: int) -> None:
         """Initialize a new item.
@@ -98,16 +129,31 @@ class Item:
         self.target_points = target_points
 
 
+class Tcard(Item):
+    def __init__(self, name: str, start: int, target: int, target_points: int, swipes: int):
+        Item.__init__(self, name, start, target, target_points)
+        self.swipes = swipes
+
+
 class Player:
     """
     A Player in the text advanture game.
 
     Instance Attributes:
-        - # TODO
+        - x: coordinator of x
+        - y: coordinator of y
+        - inventory: the backpack of the player
+        - vitory: whether the player wins
 
     Representation Invariants:
-        - # TODO
+        - self.x >= 0
+        - self.y >= 0
     """
+
+    x: int
+    y: int
+    inventory: list
+    victory: bool
 
     def __init__(self, x: int, y: int) -> None:
         """
@@ -132,8 +178,11 @@ class World:
         - # TODO add more instance attributes as needed; do NOT remove the map attribute
 
     Representation Invariants:
-        - # TODO
+        - map != []
     """
+    map: list[list[int]]
+    location: list[Location]
+    items: list[Item]
 
     def __init__(self, map_data: TextIO, location_data: TextIO, items_data: TextIO) -> None:
         """
@@ -142,6 +191,7 @@ class World:
         - location_data: name of text file containing location data (format left up to you)
         - items_data: name of text file containing item data (format left up to you)
         """
+
 
         # NOTES:
 
@@ -154,6 +204,8 @@ class World:
 
         # The map MUST be stored in a nested list as described in the load_map() function's docstring below
         self.map = self.load_map(map_data)
+        self.location = self.load_location(location_data)
+        self.items_data =
 
         # NOTE: You may choose how to store location and item data; create your own World methods to handle these
         # accordingly. The only requirements:
@@ -172,8 +224,42 @@ class World:
 
         Return this list representation of the map.
         """
+        # with open("D:/23 winter courses/csc111/assignments/csc111-project1/map.txt") as f:
+        lst = []
+        for line in map_data:
+            lst.append(line.strip())
+        maplst = []
+        for string in lst: #['1 -2 0','3 4 5']
+            strrow = string.split() #['1','-2','0']
+            introw = [int(num) for num in strrow] #[1,-2,0]
+            maplst.append(introw)
+        return maplst
 
-        # TODO: Complete this method as specified. Do not modify any of this function's specifications.
+
+    def load_location(self, location_data: TextIO) -> list[Location]:
+        """Store location file in to a dictionary
+        each line of the text are related to the keys of the dictionary"""
+        # with open("D:/23 winter courses/csc111/assignments/csc111-project1/locations.txt") as location_data:
+        locations = []
+        lastline = 0
+        while lastline != "ENDFILE\n":
+            name = int(location_data.readline().strip())
+            points = int(location_data.readline().strip())
+            # point2 = int(location_data.readline().strip())
+            brief_desc = location_data.readline().strip()
+            long_desc = location_data.readline().strip()
+            preitem = location_data.readline().strip()
+            if preitem == '\n':
+                item_avai = None
+            else:
+                preitem1 = preitem.split(';')
+                item_avai = {int(t.split('=')[0]): t.split('=')[1] for t in preitem1}
+            location = Location(name,points,brief_desc,long_desc,False,item_avai)
+            locations.append(location)
+            location_data.readline()
+            lastline = location_data.readline() # we let the lastline of location file to be ENDFILE
+        return locations
+
 
     # TODO: Add methods for loading location data and item data (see note above).
 
@@ -183,5 +269,6 @@ class World:
          that position. Otherwise, return None. (Remember, locations represented by the number -1 on the map should
          return None.)
         """
+        if
 
-        # TODO: Complete this method as specified. Do not modify any of this function's specifications.
+        return None

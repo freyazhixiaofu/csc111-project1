@@ -28,8 +28,8 @@ if __name__ == "__main__":
     w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     p = Player(0, 0)  # set starting location of player; you may change the x, y coordinates here as appropriate
 
-    menu = ["look", "inventory", "score", "quit", "back"]
-
+    menu = ["look", "inventory", "score", "quit", "pickup", "deposit"]
+# we changed the menu(pickup , deposit) deleted "back"
     while not p.victory:
         location = w.get_location(p.x, p.y)
 
