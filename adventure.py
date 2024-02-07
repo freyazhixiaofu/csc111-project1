@@ -28,18 +28,26 @@ if __name__ == "__main__":
     w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     p = Player(0, 0)  # set starting location of player; you may change the x, y coordinates here as appropriate
 
-    menu = ["look", "inventory", "score", "quit", "pickup", "deposit"]
+    menu = ["look", "inventory", "score", "quit", "pickup", "deposit", "go"]
 # we changed the menu(pickup , deposit) deleted "back"
     while not p.victory:
         location = w.get_location(p.x, p.y)
 
         # TODO: ENTER CODE HERE TO PRINT LOCATION DESCRIPTION
+        if location.visit is False:
+            print(location.long_desc)
+        else:
+            print(location.br_desc)
         # Depending on whether or not it's been visited before,
         # print either full description (first time visit) or brief description (every subsequent visit)
+        for item in p.inventory:
+            if item.name == "tcard":
+                if item.swipes == 1:
+                    print("Warning: you only have 1 swipe left on your tcard, please renew your swipes")
 
         print("What to do? \n")
         print("[menu]")
-        for action in location.available_actions():
+        for action in location.available_actions(p, w):
             print(action)
         choice = input("\nEnter action: ")
 
@@ -48,6 +56,37 @@ if __name__ == "__main__":
             for option in menu:
                 print(option)
             choice = input("\nChoose action: ")
+
+        elif choice == "look":
+            print(location.long_desc)
+
+        elif choice == "inventory":
+            print(p.inventory)
+
+        elif choice == "score":
+            # print(p.score)
+
+        elif choice == "quit":
+            break
+
+        elif choice == "go":
+            direction = input("\n Choose a direction")
+            go(p, w, direction)
+
+        elif choice == "pickup":
+            things_to_pickup = input(
+                "\n what do you want to pick up? use 'and' to connect things if you want more than one things")
+            lst_of_things = things_to_pickup.split('and')
+            pickup(p, lst_of_things, w)
+
+        elif choice == "deposit":
+            thing_to_deposit = input(
+                "\n what do you want to deposit? you can only deposit one thing at a time")
+            deposit(p,thing_to_deposit, w)
+
+
+
+
 
         # TODO: CALL A FUNCTION HERE TO HANDLE WHAT HAPPENS UPON THE PLAYER'S CHOICE
         #  REMEMBER: the location = w.get_location(p.x, p.y) at the top of this loop will update the location if

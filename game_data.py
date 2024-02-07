@@ -31,7 +31,6 @@ class Location:
         - long_desc: a long description
         - direc: a list of available commands/directions to move
         - visit: whether the place has been visited
-        - item_ava: a list of available commands/directions to move
 
     Representation Invariants:
         - number >= -1
@@ -43,10 +42,10 @@ class Location:
     long_desc: str
     # direc: list[str]
     visit: bool
-    item_ava: Optional[dict[str, int]] = None
+    tcard: bool
 
     def __init__(self, number: int, points: int, brief: str, long: str,
-                 visit: bool, itemavai: dict) -> None:
+                 visit: bool, tcard: bool) -> None:
         """Initialize a new location.
 
         """
@@ -56,7 +55,7 @@ class Location:
         self.long_desc = long
         # self.direc = direc
         self.visit = visit
-        self.item_ava = itemavai
+        self.tcard = tcard
 
         # NOTES:
         # Data that could be associated with each Location object:
@@ -75,20 +74,6 @@ class Location:
         # All locations in your game MUST be represented as an instance of this class.
 
         # TODO: Complete this method
-
-    def available_actions(self):
-        """
-        Return the available actions in this location.
-        The actions should depend on the items available in the location
-        and the x,y position of this location on the world map.
-        """
-
-        # NOTE: This is just a suggested method
-        # i.e. You may remove/modify/rename this as you like, and complete the
-        # function header (e.g. add in parameters, complete the type contract) as needed
-        if self.item_ava == {}:
-            return "look", "inventory", "score", "quit", "deposit"
-        return "look", "inventory", "score", "quit", "pickup", "deposit"
 
 
 class Item:
@@ -175,10 +160,12 @@ class World:
 
     Instance Attributes:
         - map: a nested list representation of this world's map
-        - # TODO add more instance attributes as needed; do NOT remove the map attribute
-
+        - location: a list of locations in the world
+        - items: a list of items in the world
     Representation Invariants:
         - map != []
+        - location != []
+        - items != []
     """
     map: list[list[int]]
     location: list[Location]
@@ -192,7 +179,6 @@ class World:
         - items_data: name of text file containing item data (format left up to you)
         """
 
-
         # NOTES:
 
         # map_data should refer to an open text file containing map data in a grid format, with integers separated by a
@@ -205,7 +191,7 @@ class World:
         # The map MUST be stored in a nested list as described in the load_map() function's docstring below
         self.map = self.load_map(map_data)
         self.location = self.load_location(location_data)
-        self.items_data = self.load_item(items_data)
+        self.items = self.load_item(items_data)
 
         # NOTE: You may choose how to store location and item data; create your own World methods to handle these
         # accordingly. The only requirements:
@@ -229,12 +215,11 @@ class World:
         for line in map_data:
             lst.append(line.strip())
         maplst = []
-        for string in lst: #['1 -2 0','3 4 5']
-            strrow = string.split() #['1','-2','0']
-            introw = [int(num) for num in strrow] #[1,-2,0]
+        for string in lst:  # ['1 -2 0','3 4 5']
+            strrow = string.split()  # ['1','-2','0']
+            introw = [int(num) for num in strrow]  # [1,-2,0]
             maplst.append(introw)
         return maplst
-
 
     def load_location(self, location_data: TextIO) -> list[Location]:
         """Store location file in to a dictionary
@@ -249,21 +234,13 @@ class World:
             brief_desc = location_data.readline().strip()
             long_desc = location_data.readline().strip()
 
-            preitem = location_data.readline().strip()
-            if preitem == '':
-                item_avai = None
-            else:
-                preitem1 = preitem.split(';')
-                item_avai = {t.split('=')[0]: int(t.split('=')[1]) for t in preitem1}
-
-            location = Location(name,points,brief_desc,long_desc,False,item_avai)
+            location = Location(name, points, brief_desc, long_desc, False)
             locations.append(location)
             location_data.readline()
-            lastline = location_data.readline() # we let the lastline of location file to be ENDFILE
+            lastline = location_data.readline()  # we let the lastline of location file to be ENDFILE
         return locations
 
-
-    def load_item(self,items_data: TextIO) -> list[Item]:
+    def load_item(self, items_data: TextIO) -> list[Item]:
         """Store a list of items in the world"""
         # with open("D:/23 winter courses/csc111/assignments/csc111-project1/items.txt") as items_data:
 
@@ -274,7 +251,10 @@ class World:
             target = int(listline[1])
             target_points = int(listline[2])
             name = listline[3]
-            item = Item(name,start,target,target_points)
+            if name == 'tcard':
+                item = Tcard(name, start, target, target_points, 4)
+            else:
+                item = Item(name, start, target, target_points)
             itemlist.append(item)
         return itemlist
 
@@ -285,7 +265,71 @@ class World:
         """Return Location object associated with the coordinates (x, y) in the world map, if a valid location exists at
          that position. Otherwise, return None. (Remember, locations represented by the number -1 on the map should
          return None.)
-        """
-        if
+         Preconditions:
+         - x >= 0
+         - y >= 0"""
+        size_map_x = len(self.map[0])  # how many horizontally
+        size_map_y = len(self.map)  # how many vertically
+        if (x >= size_map_x) or (y >= size_map_y):
+            return None
+        elif self.map[y][x] >= 0:
+            for loca in self.location:
+                if loca.number == self.map[y][x]:
+                    return loca
+        else:
+            return None
 
-        return None
+
+def pickup(player: Player, things: list, w: World) -> None:
+    """put the list of things he wants into his backpack"""
+    for thing in things:
+        for item in w.items:
+            if item.name == thing and w.get_location(player.x, player.y) == item.start:
+                player.inventory.append(item)
+            if item.name == thing and (item.name == 'tcard' or item.name == 'lucky pen' or item.name == 'cheat sheet'):
+                item.start = -1
+        print(f'successfully pickup {thing}')
+    else:
+        print('you cannot get them')
+
+
+def deposit(player: Player, thing: str, w: World) -> None:
+    """take things out from player's backpack and deposit them """
+
+    for item in w.items:
+        if thing == item.name and w.get_location(player.x, player.y) == item.target:
+            player.inventory.remove(thing)
+            print(f'successfully deposit {thing}')
+            if thing == 'latte':
+                i = get_item_index(player, "lucky pen")
+                player.inventory[i].start = w.get_location(player.x, player.y)
+                print('now you can pick up lucky pen')
+        else:
+            print('you cannot deposit it')
+
+
+def available_actions(player: Player, w: World):
+    """
+    Return the available actions in this location.
+    The actions should depend on the items available in the location
+    and the x,y position of this location on the world map.
+    """
+
+    # NOTE: This is just a suggested method
+    # i.e. You may remove/modify/rename this as you like, and complete the
+    # function header (e.g. add in parameters, complete the type contract) as needed
+    curr_actions = 'look, inventory, score, quit, go'
+    if any([item.start == w.get_location(player.x, player.y) for item in w.items]):
+        curr_actions += ', pickup'
+    elif any([item.target == w.get_location(player.x, player.y) and item in player.inventory
+              for item in w.items]):
+        curr_actions += ', deposit'
+    return curr_actions
+
+
+def get_item_index(player: Player, thing: str) -> int:
+    i = 0
+    while i < len(player.inventory):
+        if player.inventory[i].name == thing:
+            return i
+        i += 1
