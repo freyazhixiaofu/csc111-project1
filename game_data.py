@@ -45,7 +45,7 @@ class Location:
     tcard: bool
 
     def __init__(self, number: int, points: int, brief: str, long: str,
-                 visit: bool, tcard: bool) -> None:
+                 visit: bool) -> None:
         """Initialize a new location.
 
         """
@@ -55,7 +55,7 @@ class Location:
         self.long_desc = long
         # self.direc = direc
         self.visit = visit
-        self.tcard = tcard
+        self.tcard = False
 
         # NOTES:
         # Data that could be associated with each Location object:
@@ -115,9 +115,9 @@ class Item:
 
 
 class Tcard(Item):
-    def __init__(self, name: str, start: int, target: int, target_points: int, swipes: int):
+    def __init__(self, name: str, start: int, target: int, target_points: int):
         Item.__init__(self, name, start, target, target_points)
-        self.swipes = swipes
+        self.swipes = 3
 
 
 class Player:
@@ -129,6 +129,7 @@ class Player:
         - y: coordinator of y
         - inventory: the backpack of the player
         - vitory: whether the player wins
+        - steps: how many steps has the player used so far
 
     Representation Invariants:
         - self.x >= 0
@@ -139,6 +140,8 @@ class Player:
     y: int
     inventory: list
     victory: bool
+    steps: int
+    score: int
 
     def __init__(self, x: int, y: int) -> None:
         """
@@ -153,6 +156,8 @@ class Player:
         self.y = y
         self.inventory = []
         self.victory = False
+        self.steps = 0
+        self.score = 0
 
 
 class World:
@@ -235,6 +240,11 @@ class World:
             long_desc = location_data.readline().strip()
 
             location = Location(name, points, brief_desc, long_desc, False)
+
+            need_tcard = location_data.readline().strip()
+            if need_tcard == 'True':
+                location.tcard = True
+
             locations.append(location)
             location_data.readline()
             lastline = location_data.readline()  # we let the lastline of location file to be ENDFILE
@@ -284,21 +294,29 @@ def pickup(player: Player, things: list, w: World) -> None:
     """put the list of things he wants into his backpack"""
     for thing in things:
         for item in w.items:
-            if item.name == thing and w.get_location(player.x, player.y) == item.start:
+            if (item.name == thing and w.get_location(player.x, player.y) == item.start and thing != 'cat food'
+                    and thing != 'dog food'):
                 player.inventory.append(item)
             if item.name == thing and (item.name == 'tcard' or item.name == 'lucky pen' or item.name == 'cheat sheet'):
-                item.start = -1
+                item.start = -1 # so that you cannot pick up a second time
+            if item.name == thing and item.name == 'cat food' and not any(
+                    [item1.name == 'dog food' for item1 in player.inventory]):
+                player.inventory.append(item)
+            if item.name == thing and item.name == 'cat food' and not any(
+                    [item2.name == 'dog food' for item2 in player.inventory]):
+                player.inventory.append(item)
         print(f'successfully pickup {thing}')
     else:
         print('you cannot get them')
 
 
 def deposit(player: Player, thing: str, w: World) -> None:
-    """take things out from player's backpack and deposit them """
+    """take one thing out from player's backpack and deposit it """
 
     for item in w.items:
         if thing == item.name and w.get_location(player.x, player.y) == item.target:
             player.inventory.remove(thing)
+            player.score += item.target_points
             print(f'successfully deposit {thing}')
             if thing == 'latte':
                 i = get_item_index(player, "lucky pen")
@@ -308,7 +326,7 @@ def deposit(player: Player, thing: str, w: World) -> None:
             print('you cannot deposit it')
 
 
-def available_actions(player: Player, w: World):
+def available_actions(player: Player, w: World) -> str:
     """
     Return the available actions in this location.
     The actions should depend on the items available in the location
@@ -328,6 +346,8 @@ def available_actions(player: Player, w: World):
 
 
 def get_item_index(player: Player, thing: str) -> int:
+    """ get the idex of from the list of Items
+    """
     i = 0
     while i < len(player.inventory):
         if player.inventory[i].name == thing:

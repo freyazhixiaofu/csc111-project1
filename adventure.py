@@ -19,7 +19,7 @@ This file is Copyright (c) 2024 CSC111 Teaching Team
 """
 
 # Note: You may add in other import statements here as needed
-from game_data import World, Item, Location, Player
+from game_data import World, Item, Location, Player, available_actions, deposit, pickup
 
 # Note: You may add helper functions, classes, etc. here as needed
 
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     p = Player(0, 0)  # set starting location of player; you may change the x, y coordinates here as appropriate
 
     menu = ["look", "inventory", "score", "quit", "pickup", "deposit", "go"]
-# we changed the menu(pickup , deposit) deleted "back"
+    # we changed the menu(pickup , deposit) deleted "back"
     while not p.victory:
         location = w.get_location(p.x, p.y)
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
         print("What to do? \n")
         print("[menu]")
-        for action in location.available_actions(p, w):
+        for action in available_actions(p, w).split(','):  # notice, I changed the method of Location into a function
             print(action)
         choice = input("\nEnter action: ")
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
             print(p.inventory)
 
         elif choice == "score":
-            # print(p.score)
+            print(p.score)
 
         elif choice == "quit":
             break
@@ -82,11 +82,22 @@ if __name__ == "__main__":
         elif choice == "deposit":
             thing_to_deposit = input(
                 "\n what do you want to deposit? you can only deposit one thing at a time")
-            deposit(p,thing_to_deposit, w)
+            deposit(p, thing_to_deposit, w)
+        else:
+            print('your action is not available')
+        if p.steps > 10:
+            print('Danger! You are runnning out of steps. Now only 10 steps left.')
 
+        if p.steps > 30:
+            print('Sorry, you run out of steps and miss your exam')
+            break
 
-
-
+        if any(['lucky pen' == thing.name for thing in p.inventory]) and any([
+                'cheat sheeet' == thing.name for thing in p.inventory]) and any([
+                'lucky pen' == thing.name for thing in p.inventory]) and w.get_location(
+                p.x, p.y) == 12 and p.steps < 31:
+            print(f'yayyy you win!! your score is {p.score}')
+            p.victory = True
 
         # TODO: CALL A FUNCTION HERE TO HANDLE WHAT HAPPENS UPON THE PLAYER'S CHOICE
         #  REMEMBER: the location = w.get_location(p.x, p.y) at the top of this loop will update the location if
