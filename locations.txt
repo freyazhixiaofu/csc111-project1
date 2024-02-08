@@ -1,28 +1,84 @@
--1
-0
-That way is blocked.
-That way is blocked.
-
-END
-
 1
 0
-You are on the first floor of the Robarts Library. There is an empty study room to the South, an exit from the library to the East.
-You are on the first floor of the Robarts Library. It's usually crowded at this time of the day, but today it's eerily quiet. Only a few students are studying inside one of the study rooms. You better not disturb them. A librarian stands near the service desk, looking bored and sleepy. There is an empty study room to the South, an exit from the library to the East.
-drink; salmon
+You are in your dorm in woodsworth College
+You are in your dorm, at Woodsworth college with your backpack on, ready to leave for your exam. However, you are missing your T-Card, cheat sheet, and your favorite lucky pen you write every exam with. You need to go get them before arriving at the exam-center. There will be obstacles and choices you will have to make along the way, but good luck in gathering all these items and arriving at the exam center in time to take your test!
+
 END
 
 2
-0
-This study room is completely empty.
-You are in an empty study room. And by empty, we mean, absolutely empty. All the tables and chairs have been taken out, the whiteboards taken off the wall, not even the carpeting is left. Are they planning to do something else with this space?
+5
+You're in Queen’s Park, where you can pick up T-card and feed Sadia's dog.
+You’ve arrived at Queen’s Park where you encounter a lush expanse of greenery, dotted with towering trees and vibrant flower beds. The air was filled with the sweet scent of blossoms, and the sound of birdsong filled the air, lending the park an ethereal quality. Here you see Professor Sadia walking her dog. She says she found your t-card that you accidentally left afterclass, and kindly gave it to you (you can pick up). Out of gratitude, you decide to get her dog some treats. (if you feed Sadia's dog dogfood you'll get 20 points).
 
 END
 
 3
 0
-You are outside the Robarts library.
-You are outside the Robarts library on a crowded street. There is a smell of coffee in the air.
+You are at Blue field.
+You've reached the Blue Field, where the azure sky stretches endlessly above. The sun's gentle rays bathe the landscape in a serene blue hue, while laughter and chatter dance on the breeze. Beneath your feet, the grass feels cool and welcoming, a verdant carpet punctuated with bursts of blue blankets and students immersed in vibrant pursuits.
+
+END
+
+4
+5
+You are at Innis College. This place can pick up: Salmon, dog treats.
+You have arrived at your friend’s dorm, in Innis College. You're greeted warmly as they offer a tour. They mention the campus's summer charm, with cats and dogs roaming about. Noting the cats' affinity for salmon, they stored cans of salmon in their dorm. They are offering you a can for you to feed the cats along the way. Additionally, they also have dog treats handy for any canine companions you might encounter. (Your backpack can at most fit one proportion of the cat or dog food.)
+
+END
+
+5
+0
+You are at Red Field.
+You've reached the Red Field, where the azure sky stretches endlessly above. The sun's gentle rays bathe the landscape in a serene red hue, while laughter and chatter dance on the breeze. Beneath your feet, the grass feels cool and welcoming, a verdant carpet punctuated with bursts of red blankets and students immersed in vibrant pursuits.
+
+END
+
+6
+0
+You are at Trinity College.
+What stands before you is Trinity College, a stunning blend of historic architecture and modern amenities. The imposing stone buildings exuded an air of academic prestige. You see your friend, sitting on the long chair. “I have your pen,” he says. “But you still owe me a drink from Starbucks. “Go to Robarts to get me a half calf double cupped no sleeve salted caramel mocha latte in a venti cup. I will give you your lucky pen once you bring me the order.”
+
+END
+
+7
+5
+You are at Robarts Library Second Floor.You can retrieve a starbucks drink, salmon, Algorithms textbook, Philosophy textbook.
+You’ve arrived at the second floor in the Robarts library, which you have swiped your t-card to enter. In front of you is Starbucks and many other food courts. You notice they have Starbucks, where you can purchase a drink, and also cans of salmon for sale.
+True
+END
+
+8
+5
+You are at Atheletic Centre.
+You've swiped your t-card to enter the Athletic Center. The smell of chlorine hits you as soon as you walk in. From the distant gyms, you can hear the shuffle of shoes on the wooden floor. Students who have completed their exercises pass by, their conversations drifting towards the impending exams. Such a mentioning jolts you out of your reverie, realizing that time is ticking away faster than you anticipated. You realize you need to collect all your items and get to the exam center as fast as possible.
+True
+END
+
+9
+0
+You are at Purple Field.
+You've reached the Purple Field, where the azure sky stretches endlessly above. The sun's gentle rays bathe the landscape in a serene purple hue, while laughter and chatter dance on the breeze. Beneath your feet, the grass feels cool and welcoming, a verdant carpet punctuated with bursts of purple blankets and students immersed in vibrant pursuits.
+
+END
+
+10
+5
+You are at BA.
+You have arrived at the Bahen Centre for Information Technology. Students are on their laptops typing and some are in groups sitting on the chairs discussing possible exam materials and questions. You remember you lost your cheat sheet here. please pick it up. You will need it for your exam.
+
+END
+
+11
+0
+You are at Rainbow Park.
+You arrive at the Rainbow Park, greeted by the sight of a sleek gray cat frolicking in the grass. As it notices you, it emits a soft purr, almost as if it's offering you words of encouragement for your upcoming test. You can retrieve salmon from your friend at Innis or purchase a can from the Robarts library. Upon feeding the cat, you will receive +3 more swipes with your T-card.
+
+END
+
+12
+0
+You are at Exam centre.
+You have arrived at the Exam Center that you swiped your tcard to enter. There are students waiting outside the exam center, with many flipping through their notes rigorously trying to intake the content before they walk into the exam. Please make sure you have your lucky pen, cheat sheet, and your tcard.
 
 END
 ENDFILE

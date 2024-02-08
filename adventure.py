@@ -96,7 +96,8 @@ if __name__ == "__main__":
                 'cheat sheeet' == thing.name for thing in p.inventory]) and any([
                 'lucky pen' == thing.name for thing in p.inventory]) and w.get_location(
                 p.x, p.y) == 12 and p.steps < 31:
-            print(f'yayyy you win!! your score is {p.score}')
+            print(f'yayyy you win!! your score is {(30-p.score) * 7}')
+
             p.victory = True
 
         # TODO: CALL A FUNCTION HERE TO HANDLE WHAT HAPPENS UPON THE PLAYER'S CHOICE
