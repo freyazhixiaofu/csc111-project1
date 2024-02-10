@@ -36,7 +36,7 @@ END
 6
 0
 You are at Trinity College.
-What stands before you is Trinity College, a stunning blend of historic architecture and modern amenities. The imposing stone buildings exuded an air of academic prestige. You see your friend, sitting on the long chair. “I have your pen,” he says. “But you still owe me a drink from Starbucks. “Go to Robarts to get me a half calf double cupped no sleeve salted caramel mocha latte in a venti cup. I will give you your lucky pen once you bring me the order.”
+What stands before you is Trinity College, a stunning blend of historic architecture and modern amenities. The imposing stone buildings exuded an air of academic prestige. You see your friend, sitting on the long chair. "I have your pen," he says. "But you still owe me a drink from Starbucks." "Go to Robarts to get me a half calf double cupped no sleeve salted caramel mocha latte in a venti cup. I will give you your lucky pen once you bring me the order."
 
 END
 

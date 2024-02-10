@@ -1,3 +1,6 @@
-1 10 5 Cheat_Sheet
-3 12 10 lucky_pen
-5 6 7 tcard
+10 12 10 cheat sheet
+-1 12 10 lucky pen
+2 12 10 tcard
+4 10 8 cat food
+7 6 8 latte
+4 2 10 dog food

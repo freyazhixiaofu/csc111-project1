@@ -19,7 +19,7 @@ This file is Copyright (c) 2024 CSC111 Teaching Team
 """
 
 # Note: You may add in other import statements here as needed
-from game_data import World, Item, Location, Player, available_actions, deposit, pickup
+from game_data import World, Player, Item, Location, available_actions, deposit, pickup, go
 
 # Note: You may add helper functions, classes, etc. here as needed
 
@@ -28,16 +28,29 @@ if __name__ == "__main__":
     w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     p = Player(0, 0)  # set starting location of player; you may change the x, y coordinates here as appropriate
 
+
+# def print_format(sentences: str) -> None:
+#     """convert a str into several lines for better formating"""
+#     i = 0
+#     lines = len(sentences) // 80
+#     lst = []
+#     while i < lines:
+#         lst.append(sentences[i * 80: i * 80 + 80])
+#         i += 1
+#     if len(sentences) // 80 != len(sentences) / 80:
+#         lst.append(sentences[i * 80:])
+#     for line in lst:
+#         print(line)
+
     menu = ["look", "inventory", "score", "quit", "pickup", "deposit", "go"]
     # we changed the menu(pickup , deposit) deleted "back"
+    location = w.get_location(p.x, p.y)
+    print(location.long_desc)
     while not p.victory:
         location = w.get_location(p.x, p.y)
 
         # TODO: ENTER CODE HERE TO PRINT LOCATION DESCRIPTION
-        if location.visit is False:
-            print(location.long_desc)
-        else:
-            print(location.br_desc)
+
         # Depending on whether or not it's been visited before,
         # print either full description (first time visit) or brief description (every subsequent visit)
         for item in p.inventory:
@@ -72,6 +85,11 @@ if __name__ == "__main__":
         elif choice == "go":
             direction = input("\n Choose a direction")
             go(p, w, direction)
+            location = w.get_location(p.x, p.y)
+            if location.visit is False:
+                print(location.long_desc)
+            else:
+                print(location.br_desc)
 
         elif choice == "pickup":
             things_to_pickup = input(
@@ -93,10 +111,10 @@ if __name__ == "__main__":
             break
 
         if any(['lucky pen' == thing.name for thing in p.inventory]) and any([
-                'cheat sheeet' == thing.name for thing in p.inventory]) and any([
-                'lucky pen' == thing.name for thing in p.inventory]) and w.get_location(
-                p.x, p.y) == 12 and p.steps < 31:
-            print(f'yayyy you win!! your score is {(30-p.score) * 7}')
+            'cheat sheeet' == thing.name for thing in p.inventory]) and any([
+            'lucky pen' == thing.name for thing in p.inventory]) and w.get_location(
+            p.x, p.y) == 12 and p.steps < 31:
+            print(f'yayyy you win!! your score is {(30 - p.score) * 7}')
 
             p.victory = True
 
