@@ -45,7 +45,7 @@ class Location:
     tcard: bool
 
     def __init__(self, number: int, points: int, brief: str, long: str,
-                 visit: bool) -> None:
+                 visit: bool, tcard: bool) -> None:
         """Initialize a new location.
 
         """
@@ -55,7 +55,7 @@ class Location:
         self.long_desc = long
         # self.direc = direc
         self.visit = visit
-        self.tcard = False
+        self.tcard = tcard
 
         # NOTES:
         # Data that could be associated with each Location object:
@@ -109,14 +109,12 @@ class Item:
         # All item objects in your game MUST be represented as an instance of this class.
 
         self.name = name
-        self.start = start
-        self.target = target
+        self.start_position = start
+        self.target_position = target
         self.target_points = target_points
 
 
 class Tcard(Item):
-    swipes: int
-
     def __init__(self, name: str, start: int, target: int, target_points: int, swipes: int):
         Item.__init__(self, name, start, target, target_points)
         self.swipes = swipes
@@ -131,7 +129,6 @@ class Player:
         - y: coordinator of y
         - inventory: the backpack of the player
         - vitory: whether the player wins
-        - steps: how many steps has the player used so far
 
     Representation Invariants:
         - self.x >= 0
@@ -142,8 +139,6 @@ class Player:
     y: int
     inventory: list
     victory: bool
-    steps: int
-    score: int
 
     def __init__(self, x: int, y: int) -> None:
         """
@@ -158,8 +153,6 @@ class Player:
         self.y = y
         self.inventory = []
         self.victory = False
-        self.steps = 0
-        self.score = 0
 
 
 class World:
@@ -242,11 +235,6 @@ class World:
             long_desc = location_data.readline().strip()
 
             location = Location(name, points, brief_desc, long_desc, False)
-
-            need_tcard = location_data.readline().strip()
-            if need_tcard == 'True':
-                location.tcard = True
-
             locations.append(location)
             location_data.readline()
             lastline = location_data.readline()  # we let the lastline of location file to be ENDFILE
@@ -296,29 +284,21 @@ def pickup(player: Player, things: list, w: World) -> None:
     """put the list of things he wants into his backpack"""
     for thing in things:
         for item in w.items:
-            if (item.name == thing and w.get_location(player.x, player.y) == item.start and thing != 'cat food'
-                    and thing != 'dog food'):
+            if item.name == thing and w.get_location(player.x, player.y) == item.start:
                 player.inventory.append(item)
             if item.name == thing and (item.name == 'tcard' or item.name == 'lucky pen' or item.name == 'cheat sheet'):
-                item.start = -1  # so that you cannot pick up a second time
-            if item.name == thing and item.name == 'cat food' and not any(
-                    [item1.name == 'dog food' for item1 in player.inventory]):
-                player.inventory.append(item)
-            if item.name == thing and item.name == 'cat food' and not any(
-                    [item2.name == 'dog food' for item2 in player.inventory]):
-                player.inventory.append(item)
+                item.start = -1
         print(f'successfully pickup {thing}')
     else:
         print('you cannot get them')
 
 
 def deposit(player: Player, thing: str, w: World) -> None:
-    """take one thing out from player's backpack and deposit it """
+    """take things out from player's backpack and deposit them """
 
     for item in w.items:
         if thing == item.name and w.get_location(player.x, player.y) == item.target:
             player.inventory.remove(thing)
-            player.score += item.target_points
             print(f'successfully deposit {thing}')
             if thing == 'latte':
                 i = get_item_index(player, "lucky pen")
@@ -328,7 +308,7 @@ def deposit(player: Player, thing: str, w: World) -> None:
             print('you cannot deposit it')
 
 
-def available_actions(player: Player, w: World) -> str:
+def available_actions(player: Player, w: World):
     """
     Return the available actions in this location.
     The actions should depend on the items available in the location
@@ -348,122 +328,8 @@ def available_actions(player: Player, w: World) -> str:
 
 
 def get_item_index(player: Player, thing: str) -> int:
-    """ get the idex of from the list of Items
-    """
     i = 0
     while i < len(player.inventory):
         if player.inventory[i].name == thing:
             return i
         i += 1
-
-
-def go(player: Player, world: World, direction: str) -> None:
-    """This function allows the player to move around, they have choices of going 'north',
-    'south', 'east, 'west'. If they enter an invalid direction, a string will be returned
-    informing of why their input is invalid. If the direction they entered is correct, their
-    location will be changed. Furthermore, some locations will require a tcard to access. Thus,
-    they must have their tcard and have enough swipes in their tcard in order to enter the location.
-    If they are attempting to enter a location that requires a tcard and they don't have thier tcard
-    or don't have any available swipes in their tcard, they will be informed and the move will not be made."""
-
-    # no score changes yet
-
-    if direction != 'north' and direction != 'south' and direction != 'east' and direction != 'west':
-        print("\n This is not a valid direction.")
-        print("speechless")
-    elif direction == 'north':
-        if player.y == 0:
-            print("\n This is not a valid move because you have reached the border of the campus.")
-        elif world.get_location(player.x, player.y - 1).number == -1:
-            print("\n This is not a valid move.")
-        elif world.get_location(player.x, player.y - 1).tcard and any(
-                ["tcard" == item.name for item in player.inventory]):
-            # if the location needs tcard and the person has tcard in their inventory
-            if player.inventory[get_item_index(player, "tcard")].swipes >= 1:
-                player.y = player.y - 1
-                player.inventory[get_item_index(player, "tcard")].swipes -= 1
-                player.score += world.get_location(player.x, player.y).points
-                print(f"You now have {player.inventory[get_item_index(player, "tcard")].swipes} \
-                swipes on your tcard.")
-                # then, if there are still swipes available, minus one, if not, return not a possible route
-            else:
-                print("\n This location requires a tcard, and you do not have any swipes left to enter.")
-        elif world.get_location(player.x, player.y - 1).tcard and not any(
-                ["tcard" == item.name for item in player.inventory]):
-            print("\n This place requires a tcard. You must collect your tcard before entering this location.")
-        else:
-            player.y = player.y - 1
-            player.score += world.get_location(player.x, player.y).points
-
-    elif direction == 'south':
-        if player.y == len(world.map) - 1:
-            print("\n This is not a valid move because you have reached the border of the campus.")
-        elif world.get_location(player.x, player.y + 1).number == -1:
-            print("\n This is not a valid move.")
-            print('haha code did not work')
-        elif world.get_location(player.x, player.y + 1).tcard and any(
-                ["tcard" == item.name for item in player.inventory]):
-            # if the location needs tcard and the person has tcard in their inventory
-            if player.inventory[get_item_index(player, "tcard")].swipes >= 1:
-                player.y = player.y + 1
-                player.inventory[get_item_index(player, "tcard")].swipes -= 1
-                # then, if there are still swipes available, minus one, if not, return not a possible route
-                player.score += world.get_location(player.x, player.y).points
-                print(f"You now have {player.inventory[get_item_index(player, "tcard")].swipes} \
-                                swipes on your tcard.")
-            else:
-                print("\n This location requires a tcard, and you do not have any swipes left to enter.")
-        elif world.get_location(player.x, player.y + 1).tcard and not any(
-                ["tcard" == item.name for item in player.inventory]):
-            print("\n This place requires a tcard. You must collect your tcard before entering this location.")
-        else:
-            player.y = player.y + 1
-            player.score += world.get_location(player.x, player.y).points
-
-    elif direction == 'east':
-        if player.x == len(world.map[0]) - 1:
-            print("\n This is not a valid move because you have reached the border of the campus.")
-        elif world.get_location(player.x + 1, player.y).number == -1:
-            print("\n This is not a valid move.")
-        elif world.get_location(player.x + 1, player.y).tcard and any(
-                ["tcard" == item.name for item in player.inventory]):
-            # if the location needs tcard and the person has tcard in their inventory
-            if player.inventory[get_item_index(player, "tcard")].swipes >= 1:
-                player.x = player.x + 1
-                player.inventory[get_item_index(player, "tcard")].swipes -= 1
-                player.score += world.get_location(player.x, player.y).points
-                print(f"You now have {player.inventory[get_item_index(player, "tcard")].swipes} \
-                                swipes on your tcard.")
-                # then, if there are still swipes available, minus one, if not, return not a possible route
-            else:
-                print("\n This location requires a tcard, and you do not have any swipes left to enter.")
-        elif world.get_location(player.x + 1, player.y).tcard and not any(
-                ["tcard" == item.name for item in player.inventory]):
-            print("\n This place requires a tcard. You must collect your tcard before entering this location.")
-        else:
-            player.x = player.x + 1
-            player.score += world.get_location(player.x, player.y).points
-
-    elif direction == 'west':
-        if player.x == 0:
-            print("\n This is not a valid move because you have reached the border of the campus.")
-        elif world.get_location(player.x - 1, player.y).number == -1:
-            print("\n This is not a valid move.")
-        elif world.get_location(player.x - 1, player.y).tcard and any(
-                ["tcard" == item.name for item in player.inventory]):
-            # if the location needs tcard and the person has tcard in their inventory
-            if player.inventory[get_item_index(player, "tcard")].swipes >= 1:
-                player.x = player.x - 1
-                player.inventory[get_item_index(player, "tcard")].swipes -= 1
-                player.score += world.get_location(player.x, player.y).points
-                print(f"You now have {player.inventory[get_item_index(player, "tcard")].swipes} \
-                                swipes on your tcard.")
-                # then, if there are still swipes available, minus one, if not, return not a possible route
-            else:
-                print("\n This location requires a tcard, and you do not have any swipes left to enter.")
-        elif world.get_location(player.x - 1, player.y).tcard and not any(
-                ["tcard" == item.name for item in player.inventory]):
-            print("\n This place requires a tcard. You must collect your tcard before entering this location.")
-        else:
-            player.x = player.x - 1
-            player.score += world.get_location(player.x, player.y).points

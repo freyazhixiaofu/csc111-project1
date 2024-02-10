@@ -20,9 +20,9 @@ You've reached the Blue Field, where the azure sky stretches endlessly above. Th
 END
 
 4
-5
+0
 You are at Innis College. This place can pick up: Salmon, dog treats.
-You have arrived at your friend’s dorm, in Innis College. You're greeted warmly as they offer a tour. They mention the campus's summer charm, with cats and dogs roaming about. Noting the cats' affinity for salmon, they stored cans of salmon in their dorm. They are offering you a can for you to feed the cats along the way. Additionally, they also have dog treats handy for any canine companions you might encounter. (Your backpack can at most fit one proportion of the cat or dog food.)
+You have arrived at your friend's dorm, in Innis College. You're greeted warmly as they offer a tour. They mention the campus's summer charm, with cats and dogs roaming about. Noting the cats' affinity for salmon, they stored cans of salmon in their dorm. They are offering you a can for you to feed the cats along the way. Additionally, they also have dog treats handy for any canine companions you might encounter. (Your backpack can at most fit one proportion of the cat or dog food.)
 
 END
 
@@ -41,7 +41,7 @@ What stands before you is Trinity College, a stunning blend of historic architec
 END
 
 7
-5
+0
 You are at Robarts Library Second Floor.You can retrieve a starbucks drink, salmon, Algorithms textbook, Philosophy textbook.
 You’ve arrived at the second floor in the Robarts library, which you have swiped your t-card to enter. In front of you is Starbucks and many other food courts. You notice they have Starbucks, where you can purchase a drink, and also cans of salmon for sale.
 True
